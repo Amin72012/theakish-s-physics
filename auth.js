@@ -1,6 +1,11 @@
 // Initialize Supabase (make sure this is correct)
 const supabase = supabase.createClient("https://htjgdziushnvtpyigqrg.supabase.co", "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imh0amdkeml1c2hudnRweWlncXJnIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDE4ODUxMzIsImV4cCI6MjA1NzQ2MTEzMn0.3CR3SFyprDOYGxEwAHV6XmYVbGY2oUq5rSC-XtlkV1g");
 
+import { createClient } from '@supabase/supabase-js'
+
+const supabaseUrl = 'https://htjgdziushnvtpyigqrg.supabase.co'
+const supabaseKey = process.env.SUPABASE_KEY
+const supabase = createClient(supabaseUrl, supabaseKey)
 // Signup function
 async function signUp() {
     const email = document.getElementById("signup-email").value;
