@@ -1,15 +1,13 @@
 // Initialize Supabase (make sure this is correct)
-const supabase = supabase.createClient("https://htjgdziushnvtpyigqrg.supabase.co", "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imh0amdkeml1c2hudnRweWlncXJnIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDE4ODUxMzIsImV4cCI6MjA1NzQ2MTEzMn0.3CR3SFyprDOYGxEwAHV6XmYVbGY2oUq5rSC-XtlkV1g");
+const supabaseUrl = 'https://htjgdziushnvtpyigqrg.supabase.co';
+const supabaseKey = 'your-supabase-key-here'; // Replace with actual key
+const supabase = supabase.createClient(supabaseUrl, supabaseKey);
 
-import { createClient } from '@supabase/supabase-js'
-
-const supabaseUrl = 'https://htjgdziushnvtpyigqrg.supabase.co'
-const supabaseKey = process.env.SUPABASE_KEY
-const supabase = createClient(supabaseUrl, supabaseKey)
-// Signup function
-async function signUp() {
-    const email = document.getElementById("signup-email").value;
-    const password = document.getElementById("signup-password").value;
+// SignUp function
+async function signUp(event) {
+    event.preventDefault(); // Prevent the form from reloading the page
+    const email = document.getElementById("sign-up-email").value;
+    const password = document.getElementById("sign-up-password").value;
 
     const { data, error } = await supabase.auth.signUp({ email, password });
 
@@ -22,8 +20,9 @@ async function signUp() {
     }
 }
 
-// Login function
-async function logIn() {
+// LogIn function
+async function logIn(event) {
+    event.preventDefault(); // Prevent the form from reloading the page
     const email = document.getElementById("login-email").value;
     const password = document.getElementById("login-password").value;
 
@@ -39,27 +38,32 @@ async function logIn() {
     }
 }
 
-// Function to check if user is logged in
-async function checkUser() {
-    const { data: user } = await supabase.auth.getUser();
+// Add event listeners to forms
+document.getElementById("sign-up-form").addEventListener("submit", signUp);
+document.getElementById("login-form").addEventListener("submit", logIn);
 
-    if (user) {
-        console.log("User is logged in:", user);
-    } else {
-        console.log("No user logged in");
+// File Upload function (to be implemented if you need it)
+async function uploadFile(event) {
+    event.preventDefault();
+    const fileInput = document.getElementById("file-input");
+    const file = fileInput.files[0];
+
+    if (!file) {
+        alert("No file selected");
+        return;
     }
-}
 
-// Logout function
-async function logOut() {
-    const { error } = await supabase.auth.signOut();
+    const { data, error } = await supabase.storage
+        .from("sandplot-files") // Replace with your bucket name
+        .upload(file.name, file);
 
     if (error) {
-        console.error("Logout Error:", error.message);
-        alert("Logout failed: " + error.message);
+        console.error("File Upload Error:", error.message);
+        alert("Upload failed: " + error.message);
     } else {
-        console.log("Logged out successfully");
-        alert("You have logged out.");
-        window.location.href = "index.html"; // Redirect to homepage
+        console.log("File Upload Success:", data);
+        alert("File uploaded successfully!");
     }
 }
+
+document.getElementById("file-upload-form").addEventListener("submit", uploadFile);
