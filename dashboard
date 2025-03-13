@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard</title>
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js"></script>
+    <script src="auth.js" defer></script>
+</head>
+<body>
+    <h1>Welcome to Your Dashboard</h1>
+    
+    <p id="user-email">Checking login status...</p>
+
+    <!-- Upload Form -->
+    <h2>Upload Your .sandplot File</h2>
+    <input type="file" id="fileInput" accept=".sandplot">
+    <button onclick="uploadFile()">Upload</button>
+    <p id="upload-status"></p>
+
+    <br>
+    <button onclick="logOut()">Logout</button>
+
+    <script>
+        // Initialize Supabase
+        const supabase = supabase.createClient("YOUR_SUPABASE_URL", "YOUR_SUPABASE_ANON_KEY");
+
+        // Check if user is logged in
+        async function checkUser() {
+            const { data, error } = await supabase.auth.getUser();
+            if (data.user) {
+                document.getElementById("user-email").innerText = "Logged in as: " + data.user.email;
+            } else {
+                window.location.href = "index.html"; // Redirect if not logged in
+            }
+        }
+        checkUser();
+
+        // Upload .sandplot file
+        async function uploadFile() {
+            const fileInput = document.getElementById("fileInput");
+            if (!fileInput.files.length) {
+                alert("Please select a file first.");
+                return;
+            }
+
+            const file = fileInput.files[0];
+            const filePath = `sandplots/${file.name}`;
+            
+            const { data, error } = await supabase.storage.from("sandplot_files").upload(filePath, file);
+
+            if (error) {
+                console.error("Upload Error:", error.message);
+                document.getElementById("upload-status").innerText = "Upload failed: " + error.message;
+            } else {
+                document.getElementById("upload-status").innerText = "Upload successful!";
+            }
+        }
+
+        // Logout function
+        async function logOut() {
+            const { error } = await supabase.auth.signOut();
+            if (!error) {
+                window.location.href = "index.html";
+            }
+        }
+    </script>
+</body>
+</html>
