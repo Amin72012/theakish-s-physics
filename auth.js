@@ -1,68 +1,60 @@
-// Initialize Supabase client
-const supabaseUrl = 'https://htjgdziushnvtpyigqrg.supabase.co'; // Replace with your Supabase URL
-const supabaseKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imh0amdkeml1c2hudnRweWlncXJnIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDE4ODUxMzIsImV4cCI6MjA1NzQ2MTEzMn0.3CR3SFyprDOYGxEwAHV6XmYVbGY2oUq5rSC-XtlkV1g'; // Replace with your Supabase anon key
-const supabase = supabase.createClient(supabaseUrl, supabaseKey);
+// Initialize Supabase (make sure this is correct)
+const supabase = supabase.createClient("https://htjgdziushnvtpyigqrg.supabase.co", "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imh0amdkeml1c2hudnRweWlncXJnIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDE4ODUxMzIsImV4cCI6MjA1NzQ2MTEzMn0.3CR3SFyprDOYGxEwAHV6XmYVbGY2oUq5rSC-XtlkV1g");
 
-// Function to handle sign-up
-async function signUp(email, password) {
-    const { user, error } = await supabase.auth.signUp({
-        email: email,
-        password: password,
-    });
+// Signup function
+async function signUp() {
+    const email = document.getElementById("signup-email").value;
+    const password = document.getElementById("signup-password").value;
+
+    const { data, error } = await supabase.auth.signUp({ email, password });
 
     if (error) {
-        console.error('Error during sign-up:', error.message);
+        console.error("Signup Error:", error.message);
+        alert("Signup failed: " + error.message);
     } else {
-        console.log('User created:', user);
+        console.log("Signup Success:", data);
+        alert("Account created successfully! You can now log in.");
     }
 }
 
-// Function to handle login
-async function logIn(email, password) {
-    const { user, error } = await supabase.auth.signInWithPassword({
-        email: email,
-        password: password,
-    });
+// Login function
+async function logIn() {
+    const email = document.getElementById("login-email").value;
+    const password = document.getElementById("login-password").value;
+
+    const { data, error } = await supabase.auth.signInWithPassword({ email, password });
 
     if (error) {
-        console.error('Error during login:', error.message);
+        console.error("Login Error:", error.message);
+        alert("Login failed: " + error.message);
     } else {
-        console.log('User logged in:', user);
+        console.log("Login Success:", data);
+        alert("Logged in successfully!");
+        window.location.href = "dashboard.html"; // Redirect user after login
     }
 }
 
-// Function to handle file upload
-async function uploadFile(file) {
-    const { data, error } = await supabase.storage
-        .from('sandplot-files') // The name of your storage bucket
-        .upload('public/' + file.name, file);
+// Function to check if user is logged in
+async function checkUser() {
+    const { data: user } = await supabase.auth.getUser();
 
-    if (error) {
-        console.error('Error during file upload:', error.message);
+    if (user) {
+        console.log("User is logged in:", user);
     } else {
-        console.log('File uploaded:', data);
+        console.log("No user logged in");
     }
 }
 
-// Event listener for sign-up form submission
-document.getElementById('sign-up-form').addEventListener('submit', async (e) => {
-    e.preventDefault();
-    const email = document.getElementById('sign-up-email').value;
-    const password = document.getElementById('sign-up-password').value;
-    await signUp(email, password);
-});
+// Logout function
+async function logOut() {
+    const { error } = await supabase.auth.signOut();
 
-// Event listener for login form submission
-document.getElementById('login-form').addEventListener('submit', async (e) => {
-    e.preventDefault();
-    const email = document.getElementById('login-email').value;
-    const password = document.getElementById('login-password').value;
-    await logIn(email, password);
-});
-
-// Event listener for file upload form submission
-document.getElementById('file-upload-form').addEventListener('submit', async (e) => {
-    e.preventDefault();
-    const file = document.getElementById('file-input').files[0];
-    await uploadFile(file);
-});
+    if (error) {
+        console.error("Logout Error:", error.message);
+        alert("Logout failed: " + error.message);
+    } else {
+        console.log("Logged out successfully");
+        alert("You have logged out.");
+        window.location.href = "index.html"; // Redirect to homepage
+    }
+}
