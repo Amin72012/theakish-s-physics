@@ -3,7 +3,7 @@ import { createClient } from '@supabase/supabase-js';
 
 // Initialize Supabase client with URL and Key
 const supabaseUrl = 'https://htjgdziushnvtpyigqrg.supabase.co';
-const supabaseKey = 'your-supabase-key-here'; // Ensure this key is correct
+const supabaseKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imh0amdkeml1c2hudnRweWlncXJnIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDE4ODUxMzIsImV4cCI6MjA1NzQ2MTEzMn0.3CR3SFyprDOYGxEwAHV6XmYVbGY2oUq5rSC-XtlkV1g'; // Ensure this key is correct
 const supabase = createClient(supabaseUrl, supabaseKey);
 
 // Signup function
